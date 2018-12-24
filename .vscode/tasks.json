@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cargo build",
+            "type": "shell",
+            "command": "cargo build --target wasm32-unknown-unknown && rm dist -r && mkdir -p dist && bin/wasm-bindgen.exe target/wasm32-unknown-unknown/debug/${workspaceFolderBasename}.wasm --nodejs --out-dir dist",
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "cargo release",
+            "type": "shell",
+            "command": "cargo build --release --target wasm32-unknown-unknown && rm dist -r && mkdir -p dist && bin/wasm-bindgen.exe target/wasm32-unknown-unknown/debug/${workspaceFolderBasename}.wasm --nodejs --out-dir dist",
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "node",
+            "type": "shell",
+            "command": "node -e \"var wasm = require('./dist/${workspaceFolderBasename}').main;\"",
+            "problemMatcher": []
+        }
+    ]
+}

@@ -4,9 +4,9 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn greet(name: String) -> String {
-    name
+    name + "foo"
 }
 
 fn main() {
-    println!("Hello, world!");
+    println!("Hello, world!, {}", greet("bar".to_string()));
 }

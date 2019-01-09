@@ -74,11 +74,7 @@ impl Parser {
         use self::Operator::*;
         while let Some(Item::Operator(op)) = self.0.current() {
             match op {
-                Mul | Div => {
-                    self.0.next();
-                    let right = self.value().unwrap();
-                    expr = Expr::Operator(Infix::new(op, expr, right));
-                },
+                Mul | Div => return self.prior_operator(expr),
                 _ => {
                     self.0.next();
                     let value = self.value().unwrap();

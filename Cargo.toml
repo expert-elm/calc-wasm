@@ -4,6 +4,9 @@ version = "0.0.1"
 authors = ["Rabbit <yfhj1990@hotmail.com>"]
 edition = "2018"
 
+[profile.release]
+lto = true
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 

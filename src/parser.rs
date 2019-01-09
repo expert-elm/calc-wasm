@@ -71,14 +71,55 @@ impl Parser {
 
     #[inline(always)]
     fn attempt(&mut self, mut expr: Expr) -> Expr {
-        if let Some(item) = self.0.current() {
-            if let Item::Operator(op) = item {
-                self.0.next();
-                let right = self.next().unwrap();
-                expr = Expr::Operator(Infix::new(op, expr, right));
+        use self::Operator::*;
+        while let Some(Item::Operator(op)) = self.0.current() {
+            match op {
+                Mul | Div => {
+                    self.0.next();
+                    let right = self.value().unwrap();
+                    expr = Expr::Operator(Infix::new(op, expr, right));
+                },
+                _ => {
+                    self.0.next();
+                    let value = self.value().unwrap();
+                    let right = self.prior_operator(value);
+                    expr = Expr::Operator(Infix::new(op, expr, right));
+                }
             }
         }
         expr
+    }
+
+    #[inline(always)]
+    fn prior_operator(&mut self, mut expr: Expr) -> Expr {
+        use self::Operator::*;
+        while let Some(Item::Operator(op)) = self.0.current() {
+            match op {
+                Mul | Div => {
+                    self.0.next();
+                    let right = self.value().unwrap();
+                    expr = Expr::Operator(Infix::new(op, expr, right));
+                },
+                _ => break
+            }
+        }
+        expr
+    }
+
+    #[inline(always)]
+    fn value(&mut self) -> Option<Expr> {
+        use self::Expr::*;
+        let item = self.0.current()?;
+        let result = match item {
+            Item::Number(val) => {
+                self.0.next();
+                Literal(val)
+            },
+            Item::Ident(name) => self.eval(name),
+            Item::Lparent => self.block(),
+            _ => return None,
+        };
+        Some(result)
     }
 
     #[inline(always)]

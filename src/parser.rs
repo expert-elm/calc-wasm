@@ -66,7 +66,7 @@ impl Parser {
         self.0.next();
         let expr = self.next().unwrap();
         self.expect(Item::Rparent);
-        self.attempt(expr)
+        expr
     }
 
     #[inline(always)]

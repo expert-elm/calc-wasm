@@ -1,6 +1,6 @@
 const SOURCE: &'static str = r#"
 
-    1 + 2 * (sin(0)) + 3 + 4 / 2
+    1 + 2 * (sin(90) + 3) + 4 / 2
 
 "#;
 

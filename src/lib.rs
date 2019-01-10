@@ -1,8 +1,12 @@
-extern crate wasm_bindgen;
-
 use wasm_bindgen::prelude::*;
 
+mod lexer;
+mod parser;
+
+use self::parser::Parser;
+
 #[wasm_bindgen]
-pub fn main(name: String) -> String {
-    name + "foo"
+pub fn calc(name: String) -> String {
+    let mut p = Parser::new(&name);
+    format!("{}", p.parse())
 }

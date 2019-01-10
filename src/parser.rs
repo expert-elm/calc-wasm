@@ -17,6 +17,8 @@ impl Infix {
     }
 }
 
+type Number = f64;
+
 #[derive(Debug)]
 enum Expr {
     Literal(String),
@@ -24,7 +26,7 @@ enum Expr {
     Eval(String, Vec<Box<Expr>>),
 }
 
-fn calc(infix: Infix) -> u32 {
+fn calc(infix: Infix) -> Number {
     use self::Operator::*;
 
     let left  = infix.left.eval();
@@ -38,18 +40,27 @@ fn calc(infix: Infix) -> u32 {
     }
 }
 
+fn method(name: String, mut params: Vec<Box<Expr>>) -> Number {
+    if name == "sin" {
+        if params.len() > 1 { panic!("sin params invalid") }
+        let value = params.pop().unwrap().eval();
+        return value.sin();
+    }
+
+    // pass
+    params.into_iter().map(|n| n.eval()).sum::<Number>();
+    println!("\"{}\" method is undefined, so it's value is 0", name);
+    println!("---");
+    0.0
+}
+
 impl Expr {
-    fn eval(self) -> u32 {
+    fn eval(self) -> Number {
         use self::Expr::*;
         match self {
-            Literal(val)    => val.parse::<u32>().unwrap(),
-            Operator(infix) => calc(infix),
-            Eval(name, params)   => {
-                params.into_iter().map(|n| n.eval()).sum::<u32>();
-                println!("\"{}\" method is undefined, so it's value is 0", name);
-                println!("---");
-                0
-            },
+            Literal(val)       => val.parse::<Number>().unwrap(),
+            Operator(infix)    => calc(infix),
+            Eval(name, params) => method(name, params),
         }
     }
 }
@@ -172,13 +183,13 @@ impl Parser {
         }
     }
 
-    pub fn parse(&mut self) -> u32 {
+    pub fn parse(&mut self) -> Number {
         if let Some(expr) = self.next() {
             println!("AST: {:?}", expr);
             println!("---");
             expr.eval()
         } else {
-            0
+            0.0
         }
     }
 }

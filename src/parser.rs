@@ -43,7 +43,8 @@ fn calc(infix: Infix) -> Number {
 fn method(name: String, mut params: Vec<Box<Expr>>) -> Number {
     if name == "sin" {
         if params.len() > 1 { panic!("sin params invalid") }
-        let value = params.pop().unwrap().eval();
+        let radians = params.pop().unwrap().eval();
+        let value = radians * std::f64::consts::PI / 180.0;
         return value.sin();
     }
 

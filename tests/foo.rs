@@ -27,3 +27,16 @@ fn add_mul() {
     let result = finger::calc("1 + 1 * 2".to_owned());
     assert_eq!(result, "3");
 }
+
+#[test]
+fn add_div() {
+    let result = finger::calc("2 + 4 / 2".to_owned());
+    assert_eq!(result, "4");
+}
+
+#[test]
+fn random() {
+    let a = finger::calc("rand()".into());
+    let b = finger::calc("rand()".into());
+    assert_ne!(a, b);
+}

@@ -48,6 +48,47 @@ fn method(name: String, mut params: Vec<Box<Expr>>) -> Number {
         return value.sin();
     }
 
+    if name == "cos" {
+        if params.len() > 1 { panic!("cos params invalid") }
+        let radians = params.pop().unwrap().eval();
+        let value = radians * std::f64::consts::PI / 180.0;
+        return value.cos();
+    }
+
+    if name == "avg" {
+        let len = params.len();
+        if len == 0 { panic!("avg need params") }
+        return params.into_iter().map(|i| i.eval()).sum::<Number>() / len as Number;
+    }
+
+    if name == "rand" {
+        let len = params.len();
+
+        if len == 0 {
+            return rand::random::<Number>();
+        }
+
+        if len == 1 {
+            let end = params.pop().unwrap();
+            return rand::random::<Number>() * end.eval();
+        }
+
+        if len == 2 {
+            let data: Vec<Number> = params.into_iter().map(|i| i.eval()).collect();
+            let start; let end;
+            if data[0] > data[1] {
+                start = data[1];
+                end = data[0];
+            } else {
+                start = data[0];
+                end = data[1];
+            }
+            return rand::random::<Number>() * (end - start) + start;
+        }
+
+        panic!("rand params number invalid");
+    }
+
     // pass
     params.into_iter().map(|n| n.eval()).sum::<Number>();
     println!("\"{}\" method is undefined, so it's value is 0", name);
@@ -186,8 +227,8 @@ impl Parser {
 
     pub fn parse(&mut self) -> Number {
         if let Some(expr) = self.next() {
-            println!("AST: {:?}", expr);
-            println!("---");
+            // println!("AST: {:?}", expr);
+            // println!("---");
             expr.eval()
         } else {
             0.0

@@ -200,6 +200,14 @@ impl Parser {
     }
 
     #[inline(always)]
+    fn negative(&mut self) -> Option<Expr> {
+        use self::Operator::*;
+        self.expect(Item::Operator(Sub));
+        let infix = Infix::new(Mul, Expr::Literal("-1".into()), self.value().unwrap());
+        Some(self.attempt(Expr::Operator(infix)))
+    }
+
+    #[inline(always)]
     fn next(&mut self) -> Option<Expr> {
         use self::Expr::*;
         if let Some(item) = self.0.current() {
@@ -208,7 +216,9 @@ impl Parser {
                     self.0.next();
                     self.attempt(Literal(val))
                 },
-                Item::Operator(_op) => {
+                Item::Operator(op) => if op == self::Operator::Sub {
+                    return self.negative();
+                } else {
                     panic!("need a expression");
                 },
                 Item::Ident(name) => self.eval(name),

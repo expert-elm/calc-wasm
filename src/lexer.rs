@@ -54,12 +54,19 @@ impl Lexer {
     #[inline(always)]
     fn number(&mut self) -> Item {
         let mut result = format!("{}", self.now());
+        let mut is_decimal = false;
         self.inc();
 
         while !self.end() {
             let ch = self.now();
             match ch {
                 '0'...'9' => result.push(ch),
+                '.' => if !is_decimal {
+                    result.push(ch);
+                    is_decimal = true;
+                } else {
+                    break;
+                },
                 _ => break,
             }
             self.inc();

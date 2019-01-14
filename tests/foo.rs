@@ -52,3 +52,15 @@ fn random() {
     let b = finger::calc("rand()".into());
     assert_ne!(a, b);
 }
+
+#[test]
+fn decimal() {
+    let a = finger::calc("0.2 / 2".into());
+    assert_eq!(a, "0.1");
+}
+
+#[test]
+fn negative() {
+    let a = finger::calc("-0.2 / 2".into());
+    assert_eq!(a, "-0.1");
+}
